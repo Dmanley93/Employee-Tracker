@@ -26,3 +26,26 @@ CREATE TABLE employee (
   manager_id INT,
   PRIMARY KEY (id)
 );
+
+INSERT INTO department(department_name)
+VALUES
+("500-Sanitation"),
+("400-Design"),
+("200-IT"),
+("100-Management");
+
+INSERT INTO title(title, salary, department_id)
+VALUES
+("1-CEO", 1000000.00, 100),
+("2-Manager", 150000.00, 100),
+("3-Software Developer", 70000.00, 200),
+("4-Designer", 60000.00, 400),
+("5-Janitor", 50000.00, 500);
+
+INSERT INTO employee(first_name, last_name, title_id)
+VALUES
+('Daniel', 'Danielson', 1),
+('Jon', 'Jonson', 2),
+('Pete', 'Peteson', 3),
+('Angela', 'Angelason', 4),
+('Josie', 'Josieson', 5)

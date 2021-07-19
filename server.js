@@ -19,24 +19,7 @@ connection.connect((err) => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}`);
     runEmployees();
-    // afterConnection();
   });
-
-  // const afterConnection = () => {
-  //   connection.query('SELECT * FROM employee', (err, res) => {
-  //     if (err) throw err;
-  //     console.log(res);
-  
-  //     for (let i = 0; i < res.length; i++) {
-  //     console.log('ID:', res[i].id);
-  //     console.log('First Name:', res[i].first_name);
-  //     console.log('Last Name:', res[i].last_name);
-  //     console.log('Role:', res[i].role_id);
-  //     console.log('Manager:', res[i].manager_id);
-  //     }
-  //     connection.end();
-  //   });
-  // };
 
 const runEmployees = () => {
   inquirer
@@ -46,6 +29,7 @@ const runEmployees = () => {
       message: 'What would you like to do?',
       choices: [
         'Add Employee',
+        'Add Department',
         'View all employees by department',
         'View all employees by Role',
         'View Employee',
@@ -58,6 +42,10 @@ const runEmployees = () => {
           addEmployee();
           break;
 
+        case 'Add department':
+          addEmployeeDept();
+          break;
+
         case 'View all employees by department':
           viewEmployeeDept();
           break;
@@ -66,8 +54,8 @@ const runEmployees = () => {
           viewEmployeeRole();
           break;
 
-        case 'View Employee':
-          viewEmployee();
+        case 'View Employees':
+          viewEmployees();
           break;
 
         case 'Update Employee':
@@ -108,51 +96,99 @@ const addEmployee = () => {
     });
 };
 
-viewEmployee = () => {
+const addEmployeeDept = () => {
   inquirer
   .prompt({
-    name: 'action',
-    type: 'rawlist',
-    message: 'Which Employee would you like to view?',
-    choices: []
+    name: 'department',
+    type: 'input',
+    message: 'Please add a department: ',
   })
   .then((answers) => {
-      
+    connection.query("INSERT INTO department (name) VALUES (?)", [answers.newDepartment], (err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      runEmployees();
     })
+})
 }
 
-// viewEmployeeDept = () => {
-//   inquirer
-//   .prompt({
-//     name: 'action',
-//     type: 'rawlist',
-//     message: 'What would you like to do?',
-//   })
-//   .then((answers) => {
-      
-//   })
-// }
+const viewEmployees = () => {
+  connection.query("SELECT * FROM employee;", function (err, res) {
+    if (err) throw (err);
+    console.table(res);
+    runEmployees();
+  })
+}
 
-// viewEmployeeRole = () => {
-//   inquirer
-//   .prompt({
-//     name: 'action',
-//     type: 'rawlist',
-//     message: 'What would you like to do?',
-//   })
-//   .then((answers) => {
-      
-//   })
-// }
+const viewEmployeeDept = () => {
+  connection.query("SELECT * FROM department;", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    runEmployees();
+  })
+}
 
-// updateEmployee = () => {
-//   inquirer
-//   .prompt({
-//     name: 'action',
-//     type: 'rawlist',
-//     message: 'What would you like to do?',
-//   })
-//   .then((answers) => {
-      
-//   })
-// }
+const viewEmployeeRole = () => {
+  connection.query("SELECT * FROM title;", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    startProgram();
+  })
+}
+
+const updateEmployee = () => {
+  connection.query("SELECT first_name, last_name FROM employee", (err, results) => {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: "choice",
+          type: "rawlist",
+          choices() {
+            const choiceArray = [];
+            results.forEach(({ first_name, last_name }, i) => {
+              choiceArray.push({ name: `${first_name} ${last_name}`, value: i + 1 });
+            });
+            return choiceArray;
+          },
+          message: "Please select an employee to update.",
+        },
+        {
+          name: "action",
+          type: "list",
+          message: "Select one employee.",
+          choices: ["Update Employee"],
+        },
+      ])
+      .then((answers) => {
+        console.log(answers);
+        switch (answers.action) {
+          case "Update Employee":
+            updateRole(answers.choice);
+            break;
+          default:
+            console.log(`Invalid action: ${answers.action}`);
+            break;
+        }
+      });
+  });
+};
+
+function updateRole(employeeId) {
+  inquirer
+    .prompt({
+      name: "newEmployeeRole",
+      type: "list",
+      message: "Title: ",
+      choices: ["1-CEO", "2-Manager", "3-Software Developer", "4-Designer", "5-Janitor"],
+    })
+    .then((answers) => {
+      connection.query("UPDATE employee SET title_id=? WHERE id=?", [answers.newEmployeeRole.split("-")[0], employeeId], (err, res) => {
+        if (err) {
+          console.log(err);
+        }
+        runEmployees();
+      });
+    });
+}
