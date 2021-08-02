@@ -27,14 +27,14 @@ CREATE TABLE employee (
   PRIMARY KEY (id)
 );
 
-INSERT INTO department(department_name)
+INSERT INTO department(name)
 VALUES
 ("500-Sanitation"),
 ("400-Design"),
 ("200-IT"),
 ("100-Management");
 
-INSERT INTO title(title, salary, department_id)
+INSERT INTO employeeRole(title, salary, department_id)
 VALUES
 ("1-CEO", 1000000.00, 100),
 ("2-Manager", 150000.00, 100),
@@ -42,7 +42,7 @@ VALUES
 ("4-Designer", 60000.00, 400),
 ("5-Janitor", 50000.00, 500);
 
-INSERT INTO employee(first_name, last_name, title_id)
+INSERT INTO employee(first_name, last_name, role_id)
 VALUES
 ('Daniel', 'Danielson', 1),
 ('Jon', 'Jonson', 2),

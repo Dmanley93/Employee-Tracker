@@ -32,7 +32,7 @@ const runEmployees = () => {
         'Add Department',
         'View all employees by department',
         'View all employees by Role',
-        'View Employee',
+        'View Employees',
         'Update Employee',
       ],
     })
@@ -63,7 +63,7 @@ const runEmployees = () => {
           break;
 
         default:
-          console.log(`Invalid action: ${answer.action}`);
+          console.log(`Invalid action: ${answers.action}`);
           break;
       }
     });
@@ -85,7 +85,7 @@ const addEmployee = () => {
       name: 'role',
       type: 'list',
       message: 'What is the employees role?',
-      choices: [{name: "Sales", value: "1"}, {name: "Management", value: "2"}, {name: "Marketing", value:"3"}, {name: "Analytics", value: "4"} ]
+      choices: [{name: "CEO", value: "1"}, {name: "Management", value: "2"}, {name: "Software Developer", value:"3"}, {name: "Designer", value: "4"}, {name: "Janitor", value: "5"}]
     }])
     .then((answer) => {
       const query = 'INSERT INTO employee SET ?';
@@ -130,10 +130,10 @@ const viewEmployeeDept = () => {
 }
 
 const viewEmployeeRole = () => {
-  connection.query("SELECT * FROM title;", function (err, res) {
+  connection.query("SELECT * FROM employeeRole;", function (err, res) {
     if (err) throw err;
     console.table(res);
-    startProgram();
+    runEmployees();
   })
 }
 
@@ -184,7 +184,7 @@ function updateRole(employeeId) {
       choices: ["1-CEO", "2-Manager", "3-Software Developer", "4-Designer", "5-Janitor"],
     })
     .then((answers) => {
-      connection.query("UPDATE employee SET title_id=? WHERE id=?", [answers.newEmployeeRole.split("-")[0], employeeId], (err, res) => {
+      connection.query("UPDATE employee SET role_id=? WHERE id=?", [answers.newEmployeeRole.split("-")[0], employeeId], (err, res) => {
         if (err) {
           console.log(err);
         }
