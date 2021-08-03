@@ -42,7 +42,7 @@ const runEmployees = () => {
           addEmployee();
           break;
 
-        case 'Add department':
+        case 'Add Department':
           addEmployeeDept();
           break;
 
